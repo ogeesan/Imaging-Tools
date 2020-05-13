@@ -1,5 +1,6 @@
 function fig = mclogplot(mclog)
-% --- Find session parameters
+% converts mclog struct into an image
+% -- Find session parameters
 nTrials = size(mclog,2);
 nFrames_list = 1:nTrials;
 for trial = 1:nTrials
@@ -7,33 +8,21 @@ for trial = 1:nTrials
 end
 nFrames_max = max(nFrames_list);
 
-% --- Define 2D colormap
+% -- Define 2D colormap
 cmap_2d = calc_cmap_2d(15);
 
-% --- calculate shifts
-shifts = NaN(nTrials,nFrames_max,3);
+% -- Calculate shifts
+shifts = NaN(nTrials,nFrames_max,3); % initialise the image
 
 for xtrial = 1:nTrials
-  vshift = mclog(xtrial).vshift;
+  vshift = mclog(xtrial).vshift; % get shift values for this trial
   hshift = mclog(xtrial).hshift;
   for frame = 1:numel(mclog(xtrial).vshift)
-    xvshift = 16-vshift(frame);
+    xvshift = 16-vshift(frame); % convert shift values to index into the cmap
     xhshift = hshift(frame) + 16;
-    shifts(xtrial,frame,:) = cmap_2d(xvshift,xhshift,:);
+    shifts(xtrial,frame,:) = cmap_2d(xvshift,xhshift,:); % take a colour from the cmap corresponding to the x-y shift position
   end
 end
-
-% this calculates difference in shifts, it's pretty useless
-% for trial = 1:nTrials
-%   dhshift = diff([mclog(trial).hshift(1) mclog(trial).hshift']);
-%   dvshift = diff([mclog(trial).vshift(1) mclog(trial).vshift']);
-%   for frame = 1:numel(mclog(trial).vshift)
-%     % change -15:15 values to 1:31 for indexing into cmap_2d
-%     xvshift = 16 - dvshift(frame); % reverse the index so 1st quadrant is +ve +ve
-%     xhshift = dhshift(frame) + 16;
-%     shifts(trial,frame,:) = cmap_2d(xvshift,xhshift,:);
-%   end
-% end
 
 fig = image(shifts);
 
