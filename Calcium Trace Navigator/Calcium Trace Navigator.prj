@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="3697866135" file="C:\Users\admin\Documents\MATLAB\Calcium Trace Navigator\Calcium Trace Navigator.prj" location="C:\Users\admin\Documents\MATLAB\Calcium Trace Navigator" name="Calcium Trace Navigator" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="3425305711" file="C:\Users\admin\Documents\MATLAB\Imaging Tools\Calcium Trace Navigator\Calcium Trace Navigator.prj" location="C:\Users\admin\Documents\MATLAB\Imaging Tools\Calcium Trace Navigator" name="Calcium Trace Navigator" target="target.mlapps" target-name="Package App">
     <param.appname>Calcium Trace Navigator</param.appname>
     <param.authnamewatermark>George Stuyt</param.authnamewatermark>
     <param.email>george.stuyt@gmail.com</param.email>
@@ -12,7 +12,7 @@
     </param.icons>
     <param.summary>Easy navigation of traces stored in 1 x nTrials cell array of nROIs x nFrames matrices</param.summary>
     <param.description>Takes in &lt;tt&gt;dffarray&lt;/tt&gt; from the &lt;i&gt;workspace&lt;/i&gt; every time the chart is changed.</param.description>
-    <param.screenshot>C:\Users\admin\AppData\Local\Temp\tp5b07e371_e1fe_49b1_89b7_34debf9b5eb1.png</param.screenshot>
+    <param.screenshot>C:\Users\admin\AppData\Local\Temp\tp3170e729_1fe7_4fa6_8a68_5faf3f64cd9f.png</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name />
     <param.products.id />
@@ -38,7 +38,7 @@
     <fileset.resources />
     <fileset.package />
     <build-deliverables>
-      <file location="C:\Users\admin\Documents\MATLAB" name="Calcium Trace Navigator" optional="false">C:\Users\admin\Documents\MATLAB\Calcium Trace Navigator</file>
+      <file location="C:\Users\admin\Documents\MATLAB\Imaging Tools" name="Calcium Trace Navigator" optional="false">C:\Users\admin\Documents\MATLAB\Imaging Tools\Calcium Trace Navigator</file>
     </build-deliverables>
     <workflow />
     <matlab>
