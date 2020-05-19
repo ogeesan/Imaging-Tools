@@ -1,5 +1,3 @@
-# George's data collation readme
-
 Hiyo, here's a barebones example of how the collation system works. 
 
 The Master_Sheet spreadsheet records which files belong to which mice and the collation script will find those files (if they exist). In other words, it takes a column of filenames and creates a column containing the files themselves.
@@ -15,3 +13,5 @@ Yes, but it's too complex for my example. The overall gist is the same: the `dir
 #### What's going on in the `if` statement on lines 16-18?
 
 When we use `load()` on a .mat file that contains a structure, it returns the entire structure including the variable name. If we `load()` the structure directly into the table, then we'd have to access it with `Master.Data{row}.Data`. We want to be able to use `Master.Data{xrow}`, without the extra useless bit of indexing so some extra operations are required.
+
+Maybe there's a better way of handling it but for now it's all I've got.

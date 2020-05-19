@@ -1,10 +1,8 @@
 Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed with which we navigate through our data.
 
--  **To install, open the Calcium Trace Navigator.mlappinstall file**. The app is now accessible in the Apps tab in MATLAB.
+- **To install, open the Calcium Trace Navigator.mlappinstall file**. The app is now accessible in the Apps tab in MATLAB.
 
-- a `dffarray` is required to exist in the workspace.
-
-
+- A `dffarray` is required to exist in the workspace.
 
 The dffarray_example.mat is some example data to test the visualisation on.
 
@@ -20,4 +18,4 @@ A simple thresholding system can be used to filter out traces with no events. An
 
 ### Exporting the graph
 
-To export what you see, hovering your mouse at the top right of the plot should show an export-looking arrow, and in that menu there is an option to save the plot. 
+Hover your mouse at the top right of the plot should show an export-looking arrow, and in that menu there is an option to save the plot. 
