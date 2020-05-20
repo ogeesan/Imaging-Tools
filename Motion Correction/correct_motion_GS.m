@@ -48,9 +48,6 @@ filelist = dir([pname_raw '\*.tif']); % list of all .tif files in the folder of 
 names = {filelist.name}';
 names(contains(names,'_mc.tif')) = []; % removes any motion corrected files from being motion corrected again
 
-savefn = pname_base; % the basic naming system
-
-
 % I don't know what this is does, some sort of setting for the MC
 %kernel = gauss2(hh, ww - 64, 1, 1);    % set filter applied to each frame before cross-correlation calculation. if it is not necessary, set 'kernel = []'.
 %kernel = fft2(kernel);
@@ -135,7 +132,7 @@ for xfile = 1:nFiles
 end
 
 % -- Save trial_avgs.mat
-save([savefn 'trial_avgs.mat'],'trial_avgs') % save the raw trial averages for revision if required
+save([pname_base 'trial_avgs.mat'],'trial_avgs') % save the raw trial averages for revision if required
 
 % -- Save totalaverage.tif
 % convert trial averages to weight average
@@ -144,10 +141,10 @@ for xfile = 1:nFiles
 end
 
 trial_avgs = mean(trial_avgs,3); % sum everything together for weighted average
-imwrite(uint16(trial_avgs), [savefn 'totalaverage.tif'], 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
+imwrite(uint16(trial_avgs), [pname_base 'totalaverage.tif'], 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 
 % -- Save mclog.mat
-save([savefn 'mclog.mat'], 'mclog') % save mclog
+save([pname_base 'mclog.mat'], 'mclog') % save mclog
 
 
 % -- Script end notification
