@@ -6,11 +6,15 @@ Hola, this bad boy is a Matlab app for navigating through calcium traces. The pr
 
 The dffarray_example.mat is some example data to test the visualisation on.
 
+-----
+
 The app takes `dffarray` and visualises it. `dffarray` is a cell of size 1 x nTrials. Inside of each cell there's a matrix of size nROIs x nFrames. `dffarray` is taken from the Workspace (Matlab's variables).
 
 Plotting by Trial shows a single trial with all ROIs, and plotting by ROI does the opposite. The Waterfall setting explodes out the traces according to their number so that the first trial is at the top (y-values correspond to the trial/roi).
 
 The dffarray lamp will be green when the `dffarray` meets criteria, yellow when it does not, and red when the variable does not exist in the workspace.
+
+The .mlapp file is the App Designer script I've used to make the app.
 
 ### Threshold and filtering
 
