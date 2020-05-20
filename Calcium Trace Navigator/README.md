@@ -1,4 +1,4 @@
-Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed of navigating through the data, and so keyboard shortcuts work (use the Help button to see shortcuts).
+Hola, this bad boy's a Matlab app for navigating through calcium traces. The prime aim is to increase the speed of navigating through the data, and so there are keyboard shortcuts.
 
 # How to install and use
 
@@ -10,13 +10,13 @@ Hola, this bad boy is a Matlab app for navigating through calcium traces. The pr
 
 # More information
 
-The app takes `dffarray` and visualises it. `dffarray` is a cell of size 1 x nTrials. Inside of each cell there's a matrix of size nROIs x nFrames. `dffarray` is taken from the Workspace (Matlab's variables).
+The app takes `dffarray` **from the Workspace** and visualises it. `dffarray` is a cell of size 1 x nTrials. Inside of each cell there's a matrix of size nROIs x nFrames.
 
 Plotting by Trial shows a single trial with all ROIs, and plotting by ROI does the opposite. The Waterfall setting explodes out the traces according to their number so that the first trial is at the top (y-values correspond to the trial/roi).
 
 The dffarray lamp will be green when the `dffarray` meets criteria, yellow when it does not, and red when the variable does not exist in the workspace.
 
-The .mlapp file is the App Designer script I've used to make the app.
+The .mlapp file is the App Designer script I've used to make the app, which you might be interested in if you want to build your own visualisation app.
 
 ### Threshold and filtering
 
