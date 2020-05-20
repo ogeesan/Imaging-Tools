@@ -33,14 +33,17 @@ end
 
 % -- Define output of function
 if nargin > 1 % if option was specified
-    if option == true
+    if option == false
         figure
-    elseif option == false % if false then don't create new figure
+        image(shifts)
+    elseif option == true % output the object itself
+        fig = image(shifts);
     end
 else
     figure
+    image(shifts)
 end
     
 
-fig = image(shifts);
+
 end
