@@ -1,4 +1,5 @@
 %% correct_motion_GS
+function correct_motion_GS
 %{
 version: 200520
 Apparently this is Naoya Takahashi's code. I received LG's version and made
@@ -71,7 +72,6 @@ elseif nFrames > 1 % hopefully this isn't true
     base = avg;
     savefn_temp = [pname_base strrep(imf, '.tif', '_base.tif')]; % save basefile to base location
     imwrite(uint16(base), savefn_temp, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
-    baseFile = savefn_temp;
 else
     errordlg('Your template is messed up my dude')
     return
@@ -162,7 +162,7 @@ colorbar
 subplot(4,1,4)
 plot(tmr.times(:,3)) % plot time taken for each loop
 xlabel('Loop');ylabel('Time (s)');title('Time per loop');yline(mean(tmr.times(:,3)),':');
-
+end
 %% FUNCTIONS
 function [avg, cloc] = cor_mot(rawname, base, nFrames, kernel,savepath)
 savename = rawname(find(rawname == '\',1,'last')+1:end); % shed path from raw name
