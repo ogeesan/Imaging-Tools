@@ -1,5 +1,12 @@
-function fig = mclogplot(mclog)
-% converts mclog struct into an image
+function fig = mclogplot(mclog,option)
+% option = false will prevent figure being drawn, otherwise defaults to
+% creating new figure
+%{
+George Stuyt 20th May 2020
+Creates visualisation of motion correction offsets using a two dimensional
+colourmap.
+%}
+
 % -- Find session parameters
 nTrials = size(mclog,2);
 nFrames_list = 1:nTrials;
@@ -24,6 +31,16 @@ for xtrial = 1:nTrials
   end
 end
 
-fig = image(shifts);
+% -- Define output of function
+if nargin > 1 % if option was specified
+    if option == true
+        figure
+    elseif option == false % if false then don't create new figure
+    end
+else
+    figure
+end
+    
 
+fig = image(shifts);
 end
