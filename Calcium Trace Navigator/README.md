@@ -1,6 +1,6 @@
 Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed of navigating through the data, and so keyboard shortcuts work (use the Help button to see shortcuts).
 
-# How to use and install
+# How to install and use
 
 1. To install, open the Calcium Trace Navigator.mlappinstall file. The app is now accessible in the Apps tab in MATLAB.
 
