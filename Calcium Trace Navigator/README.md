@@ -1,12 +1,14 @@
 Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed of navigating through the data, and so keyboard shortcuts work (use the Help button to see shortcuts).
 
-- **To install, open the Calcium Trace Navigator.mlappinstall file**. The app is now accessible in the Apps tab in MATLAB.
+# How to use and install
 
-- A `dffarray` is required to exist in the workspace.
+1. To install, open the Calcium Trace Navigator.mlappinstall file. The app is now accessible in the Apps tab in MATLAB.
 
-The dffarray_example.mat is some example data to test the visualisation on.
+2. A `dffarray` is required to exist in the workspace (an example can be loaded in with the dff_example.mat).
 
------
+3. Check out the Help button in the app to see the keyboard shortcuts for speedy navigation.
+
+# More information
 
 The app takes `dffarray` and visualises it. `dffarray` is a cell of size 1 x nTrials. Inside of each cell there's a matrix of size nROIs x nFrames. `dffarray` is taken from the Workspace (Matlab's variables).
 
