@@ -16,8 +16,8 @@ The maths behind it is the same as Naoya Takahashi's code, but I've made some up
 
 - Easy specification of which files go where.
 
-- Automatically generates .tif with average of all frames processed.
+- Automatically generates .tif with average of all frames processed (totalaverage.tif).
 
-- Automatically generates average of individual trials.
+- Automatically generates average of individual trials (trial_avgs.mat)
 
 - Slick but unintrusive live progress report.
