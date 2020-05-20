@@ -1,4 +1,4 @@
-Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed with which we navigate through our data.
+Hola, this bad boy is a Matlab app for navigating through calcium traces. The prime aim is to increase the speed of navigating through the data, and so keyboard shortcuts work (use the Help button to see shortcuts).
 
 - **To install, open the Calcium Trace Navigator.mlappinstall file**. The app is now accessible in the Apps tab in MATLAB.
 

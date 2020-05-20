@@ -13,6 +13,6 @@ The centre the image (a pure white pixel) is coordinate (0, 0), and the amount o
 
 ### How to interpret the plot
 
-The plot allows for qualitative comparison of x-y offsets of frames. x-axis is frame number, y-axis is trial number.
+The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number.
 
-When there is a sudden change in colour, this means that the x-y position of the frame suddenly changed. This may indicate that z-movement has occurred. A notable feature of the plot is that it corresponds to behaviour.
+When there is a sudden change in colour, this means that the x-y position of the frame suddenly changed. This may indicate that z-movement has occurred. Examining the motion correction plot with fluorescence data can reveal brain-movement correlated fluorescence changes.
