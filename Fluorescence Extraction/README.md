@@ -39,5 +39,3 @@ So what have I changed exactly?
 1. I've subtracted 0.5 from the coordinates that are received, making them align with what is drawn in ImageJ.
 
 2. I've altered the logic for `inpolygon` by making it only include pixels that entirely within the shape. Basically, what you see in ImageJ is exactly what you're getting in Matlab.
-
-> > > > > > > 
