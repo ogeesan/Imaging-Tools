@@ -6,6 +6,10 @@ This is the script for extracting fluorescence from .tif files.
 
 Facrosstrials.mat will be output to the same location as the .zip file.
 
+## How it works
+
+Each pixel in the .tif file has a value reflecting its "brightness". The reading of an ROI takes the average value from within a shape defined in an .roi file.
+
 ## Main change: ROI reading is now pixel perfect
 
 <<<<<<< Updated upstream
