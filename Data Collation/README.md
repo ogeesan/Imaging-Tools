@@ -2,7 +2,7 @@ Hiyo, here's an example of how the collation system works. The GS_collate_cohort
 
 #### How does it work?
 
-The Master_Sheet.xlsx spreadsheet records which files belong to which mice and the collation script will find those files (if they exist). In other words, it takes a column of filenames and creates a column containing the files themselves. The magic function is `dir(**)`, which outputs the full directory of everything from your current directory. After that it's just a matter of messing around with character strings to find the file that you've named.
+The Master_Sheet.xlsx spreadsheet records which files belong to which mice and the collation script will find those files (if they exist). In other words, it takes a column of filenames and creates a column containing the files themselves. The magic function is `dir(**)`, which outputs the full directory of everything from your current directory. Then, the code moves through the spreadsheet row by row and if a filename was specified it checks for that file in the directory.
 
 #### What should I know to be able to adapt this example to my needs?
 
