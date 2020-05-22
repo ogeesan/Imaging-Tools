@@ -22,7 +22,7 @@ for row = 1:height(Master)
         end
         
     elseif sum(filerow) > 1 % more than one true = multiple files with that name
-        warning(sprintf('file ''%s'' of row %i has duplicates',filename,row)) % display a warning message if there is a duplicate
+        warning('file ''%s'' of row %i has duplicates',filename,row) % display a warning message if there is a duplicate
     end    
 end
 
