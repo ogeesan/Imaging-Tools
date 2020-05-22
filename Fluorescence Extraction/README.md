@@ -1,7 +1,6 @@
-This is the script for extracting fluorescence from .tif files.
+This is a script for extracting fluorescence from .tif files.
 
 1. Select the .zip file containing the ROIs.
-
 2. Select the folder containing .tif files to read.
 
 Facrosstrials.mat will be output to the same location as the .zip file.
