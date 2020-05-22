@@ -11,6 +11,7 @@ Facrosstrials.mat will be output to the same location as the .zip file.
 Each pixel in the .tif file has a value reflecting its "brightness". The reading of an ROI takes the average value from within a shape defined in an .roi file.
 
 ### Main change: ROI reading is now pixel perfect
+
 The major change that what you draw in ImageJ is now what you get in MATLAB. In older `readroi` scripts, an ROI that appears (in ImageJ) to cover a 3x3 square would actually be treated as a 4x4 square in the script, and other weirdness like that. It probably doesn't make a difference in the end, but I fixed that. So now when you draw your ROIs you can know two things:
 
 1. The ROI you draw is now the ROI that MATLAB sees.
@@ -28,4 +29,4 @@ So what have I changed exactly?
 
 1. I've subtracted 0.5 from the coordinates that are received, making them align with what is drawn in ImageJ.
 
-2. I've altered the logic for `inpolygon` by making it only include pixels that entirely within the shape. Basically, what you see in ImageJ is exactly what you're getting in Matlab.
+2. I've altered the logic for `inpolygon` by making it only include pixels that entirely within the shape. Basically, what you see in ImageJ is exactly what you're getting in Matlab.x
