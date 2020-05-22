@@ -33,17 +33,17 @@ names = {filelist.name}'; % get filenames
 nFiles = size(names, 1);
 
 % define name of output file
-savefn = [pathname_base '\' 'Facrosstrials']; % set save location of .mat to same location as RoiSet.zip
+savefn = [pathname_base '\' 'Facrosstrials.mat']; % set save location of .mat to same location as RoiSet.zip
 
 %% Read fluorescence
 % timing stuff
 fprintf('%s commenced reading of %i files with %i ROIs\n', datestr(now,'HH:MM:SS'), nFiles, nROIs)
 tmr.reset = '';
-
 tmr.times = NaN(nFiles,4); % vector that will record how long each .tif takes
+
 roimeans = cell(1,nFiles); % where the data will be stored
 
-% loop through trials/files
+% -- Loop through files
 for xfile = 1:nFiles
     tmr.times(xfile,1) = now;
     
@@ -107,6 +107,6 @@ subplot(2,1,2)
 plot(tmr.times(:,3))
 xlabel('Loop');ylabel('Time (s)');title('Time per loop');yline(mean(tmr.times(:,3)),':');
 
-save(savefn, 'roimeans')
+save(savefn, 'roimeans') % save the file
 cd(current_directory) % return matlab to where it was
 end
