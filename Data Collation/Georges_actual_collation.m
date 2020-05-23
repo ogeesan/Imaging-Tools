@@ -110,21 +110,21 @@ for row = 1:height(Master)
                 getname = directory.name{files(tf)}; % define the full file name
                 
                 if strcmp(tagname,'mclog.mat')
-                    loaded_file = load(fullfile(getfolderm, getname)); % temporarily load in the file here
+                    loaded_file = load(fullfile(getfolder, getname)); % temporarily load in the file here
                     fieldname = fieldnames(loaded_file); % read the name of the structure
                     Master.(filetypes{idx,2}){row} = loaded_file.(fieldname{1}); % we index back into the thing we loaded because structures are weird
                 elseif strcmp(tagname,'totalaverage.tif')
-                    loaded_file = imread(fullfile(getfolderm, getname));
+                    loaded_file = imread(fullfile(getfolder, getname));
                     Master.(filetypes{idx,2}){row} = double(loaded_file);
                 elseif strcmp(tagname,'RoiSet.zip')
-                    [rois] = ReadImageJROI(fullfile(getfolderm, getname)); % read in ROIs, cells with structure containing ROI details
+                    [rois] = ReadImageJROI(fullfile(getfolder, getname)); % read in ROIs, cells with structure containing ROI details
                     roicoords = cell(1,size(rois,2));
                     for roi = 1:numel(roicoords)
                         roicoords{roi} = rois{roi}.mnCoordinates - 0.5; % retrive roi coordinates and subtract 0.5 to align with what was drawn in ImageJ
                     end
                     Master.(filetypes{idx,2}){row} = roicoords;
                 elseif strcmp(tagname,'Facrosstrials.mat')
-                    Master.(filestyp{idx,3}){row} = load(fullfile(getfolderm, getname));
+                    Master.(filestyp{idx,3}){row} = load(fullfile(getfolder, getname));
                 end
             end
             
