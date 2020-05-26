@@ -140,7 +140,7 @@ for xfile = 1:nFiles
     trial_avgs(:,:,xfile) = trial_avgs(:,:,xfile) .* nFrames_list(xfile) ./ sum(nFrames_list);
 end
 
-trial_avgs = mean(trial_avgs,3); % sum everything together for weighted average
+trial_avgs = mean(trial_avgs,3) * 100; % sum everything together for weighted average and *100 to cancel out the "compression" that will happen in uint16
 imwrite(uint16(trial_avgs), [pname_base 'totalaverage.tif'], 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 
 % -- Save mclog.mat
