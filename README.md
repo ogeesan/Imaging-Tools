@@ -8,6 +8,8 @@ If you find an error while using something in this repository please let me know
 
 - Data Collation: an example of my collation system.
 
+- Fluorescence Extraction: extract fluorescence signals from .tif files, with more predictable ROI pixel definition.
+
 - Motion Correction: Takahashi's code but with some usability improvements.
 
 - Motion Correction Visualisation: visualisation of x-y offset of frames from an `mclog` file. 
