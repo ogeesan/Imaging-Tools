@@ -2,7 +2,9 @@ Naoya Takashi's code for motion correction (and my version) output mclog.mat, a 
 
 # How to use
 
-1. `mclogplot(mclog)`
+1. `mclogplot(mclog)` will work for most people
+2. `mclogplot(mclog,true)` will return the plot object itself
+3. `[~, shifts] = mclogplot(mclogplot)` where `shifts` is the image matrix itself
 
 # More information
 
@@ -16,6 +18,8 @@ axis square % make the image square
 The centre the image (a pure white pixel) is coordinate (0, 0), and the amount of offset applied to a frame is used to define which pixel (i.e. colour) will represent that frame.
 
 ### How to interpret the plot
+
+![](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
 
 The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number.
 
