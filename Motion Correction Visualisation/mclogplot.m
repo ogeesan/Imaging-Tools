@@ -1,8 +1,8 @@
-function fig = mclogplot(mclog,option)
+function varargout = mclogplot(mclog,option)
 % option = false will prevent figure being drawn, otherwise defaults to
 % creating new figure
 %{
-George Stuyt 20th May 2020
+George Stuyt 3rd June 2020
 Creates visualisation of motion correction offsets using a two dimensional
 colourmap.
 %}
@@ -25,7 +25,7 @@ for xtrial = 1:nTrials
   vshift = mclog(xtrial).vshift; % get shift values for this trial
   hshift = mclog(xtrial).hshift;
   for frame = 1:numel(mclog(xtrial).vshift)
-    xvshift = 16-vshift(frame); % convert shift values to index into the cmap
+    xvshift = vshift(frame) + 16; % convert shift values to index into the cmap
     xhshift = hshift(frame) + 16;
     shifts(xtrial,frame,:) = cmap_2d(xvshift,xhshift,:); % take a colour from the cmap corresponding to the x-y shift position
   end
@@ -33,17 +33,15 @@ end
 
 % -- Define output of function
 if nargin > 1 % if option was specified
-    if option == false
-        figure
-        image(shifts)
-    elseif option == true % output the object itself
-        fig = image(shifts);
+    switch option
+        case true % output the object itself
+        varargout{1} = image(shifts);
     end
 else
-    figure
     image(shifts)
 end
     
+varargout{2} = shifts;
 
 
 end
