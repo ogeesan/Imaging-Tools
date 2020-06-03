@@ -18,8 +18,7 @@ axis square % make the image square
 The centre the image (a pure white pixel) is coordinate (0, 0), and the amount of offset applied to a frame is used to define which pixel (i.e. colour) will represent that frame.
 
 ### How to interpret the plot
-![visual explanation, same as mp4 file](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
 
-The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number.
+The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number. The easiest way to get a feel for it is to watch the included .mp4 file.
 
 When there is a sudden change in colour, this means that the x-y position of the frame suddenly changed. This may indicate that z-movement has occurred. Examining the motion correction plot with fluorescence data can reveal brain-movement correlated fluorescence changes.
