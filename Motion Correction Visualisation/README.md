@@ -18,7 +18,7 @@ axis square % make the image square
 The centre the image (a pure white pixel) is coordinate (0, 0), and the amount of offset applied to a frame is used to define which pixel (i.e. colour) will represent that frame.
 
 ### How to interpret the plot
-![visual explanation](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
+![visual explanation, same as mp4 file](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
 
 The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number.
 
