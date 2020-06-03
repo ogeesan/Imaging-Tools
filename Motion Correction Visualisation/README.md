@@ -19,7 +19,7 @@ The centre the image (a pure white pixel) is coordinate (0, 0), and the amount o
 
 ### How to interpret the plot
 
-![](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
+![visual explanation](https://gfycat.com/CreativeUnlawfulDipper-small.gif)
 
 The plot allows for qualitative comparison of the x-y offsets of frames. x-axis is frame number, y-axis is trial number.
 
