@@ -19,7 +19,7 @@ Changes:
 %% Select data to be read
 % get .zip containing ImageJ ROIs
 current_directory = pwd;
-[filename, pathname_base] = uigetfile({'*.zip'; '*.roi'}, 'Select ROI set.');
+[filename, pathname_base] = uigetfile('*.*', 'Select ROI set.');
 cd(pathname_base)
 [rois] = ReadImageJROI(filename); % read in ROIs, cells with structure containing ROI details
 nROIs = size(rois,2);
@@ -33,11 +33,12 @@ names = {filelist.name}'; % get filenames
 nFiles = size(names, 1);
 
 % define name of output file
-savefn = [pathname_base '\' 'Facrosstrials.mat']; % set save location of .mat to same location as RoiSet.zip
+savefn = [pathname_base 'Facrosstrials.mat']; % set save location of .mat to same location as RoiSet.zip
 
 %% Read fluorescence
 % timing stuff
-fprintf('%s commenced reading of %i files with %i ROIs\n', datestr(now,'HH:MM:SS'), nFiles, nROIs)
+fprintf('%s commenced reading of %i files (in ''%s'') with %i ROIs | outputting to %s\n', datestr(now,'HH:MM:SS'),...
+    nFiles,pathname(find(pathname == '\', 1,'last'):end), nROIs, pathname_base(find(pathname_base == '\',2,'last')+1:end-1))
 tmr.reset = '';
 tmr.times = NaN(nFiles,4); % vector that will record how long each .tif takes
 
