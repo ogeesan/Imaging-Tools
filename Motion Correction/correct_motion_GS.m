@@ -1,5 +1,4 @@
 %% correct_motion_GS
-function correct_motion_GS
 %{
 version: 200520
 Apparently this is Naoya Takahashi's code. I received LG's version and made
@@ -21,6 +20,7 @@ Changes:
 %}
 
 %% Specify files and filenames
+function correct_motion_GS
 % get template image location and location to save output metafiles
 [fname, pname_base] = uigetfile('*.tif', 'Pick a Tif-file for base image');
 if isequal(fname, 0) || isequal(pname_base, 0)
@@ -72,6 +72,7 @@ elseif nFrames > 1 % hopefully this isn't true
     base = avg;
     savefn_temp = [pname_base strrep(imf, '.tif', '_base.tif')]; % save basefile to base location
     imwrite(uint16(base), savefn_temp, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
+    baseFile = savefn_temp;
 else
     errordlg('Your template is messed up my dude')
     return
@@ -140,7 +141,7 @@ for xfile = 1:nFiles
     trial_avgs(:,:,xfile) = trial_avgs(:,:,xfile) .* nFrames_list(xfile) ./ sum(nFrames_list);
 end
 
-trial_avgs = mean(trial_avgs,3) * 100; % sum everything together for weighted average and *100 to cancel out the "compression" that will happen in uint16
+trial_avgs = mean(trial_avgs,3) .* 1000; % sum everything together for weighted average, multiply because unit16 will "compress" it
 imwrite(uint16(trial_avgs), [pname_base 'totalaverage.tif'], 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 
 % -- Save mclog.mat
@@ -154,7 +155,7 @@ tmr.msg = sprintf('%s operation completed in %s | averaged %.2fs per loop\n', da
 fprintf([tmr.reset, tmr.msg]);
 figure
 subplot(4,1,[1 2 3])
-imagesc(trial_avgs) % plot what the totalaverage.tif looks like
+imagesc(trial_avgs,[0 prctile(trial_avgs(:),95)]) % plot what the totalaverage.tif looks like
 xticklabels([]);yticklabels([]);title('totalaverage.tif')
 axis square
 colormap('gray')
