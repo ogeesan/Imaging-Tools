@@ -2,9 +2,27 @@ Naoya Takashi's code for motion correction (and my version) output mclog.mat, a 
 
 # How to use
 
-1. `mclogplot(mclog)` will work for most people
-2. `mclogplot(mclog,true)` will return the plot object itself
-3. `[~, shifts] = mclogplot(mclogplot)` where `shifts` is the image matrix itself
+`mclogplot(mclog)` will produce an image of the offsets.
+
+There are also some options that can be specified in a structure `options` with use as `mclogplot(mclog, options)`.
+
+- maxmode: 'black' (default) or 'scale'
+  
+  - black (default): normal 15x15 2D colourspace, with greyscale colourspace extending beyond that if required.
+  
+  - scale: makes the maximum offset define the colourmap (i.e. will make the differences harder to see)
+
+- maxoffset: integer
+  specify the maximum offset, can be used together with scale to define a normal colour space. If nothing is specified, will assume 15 unless there's a larger value.
+
+- meancentre: 'true' or 'false' (default)
+  Display offsets relative to the mean offset. It doesn't change anything for me, but it might be useful to you.
+
+- shifts: 'true' or 'false' (default)
+  `shifts = mclogplot(mclog,options)` to recover the matrix of the image being used to generate the plot. Useful if you want to extract just one trial's visualisation.
+
+- image: 'true' (default) or 'false'
+  Whether or not to produce the figure.
 
 # More information
 
