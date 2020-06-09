@@ -1,7 +1,6 @@
 function roimeans = readroi_GS
-%% readroi_GS
 %{
-version: 200405
+version: 200607
 I got this from LG. It was credited to "INC 2017 by Marina and Pedro."
 
 Takes ROI set (.zip) and calculates average fluorescence for each ROI on
@@ -70,6 +69,7 @@ for xfile = 1:nFiles
     % -- Extract fluorescence
     for xframe = 1:nFrames
         singleframe = imread([pathname filesep filetoRead], xframe); % load frame
+        singleframe(singleframe < 100) = 0; % zero the dark noise
         
         % loop through ROIs
         for xroi = 1:nROIs
@@ -93,6 +93,7 @@ end
 tmr.msg = sprintf('%s operation completed in %s | averaged %.2fs per file\n', datestr(now,'HH:MM:SS'), datestr(seconds(sum(tmr.times(:,3))),'MM:SS'),mean(tmr.times(:,3)));
 fprintf([tmr.reset, tmr.msg]);
 
+figure('Name','Operation completed','NumberTitle','off')
 subplot(2,1,1)
 cmap = parula(nROIs);
 set(gca, 'ColorOrder', cmap, 'NextPlot', 'replacechildren');
