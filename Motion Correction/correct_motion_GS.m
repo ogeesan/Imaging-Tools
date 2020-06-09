@@ -1,6 +1,6 @@
 %% correct_motion_GS
 %{
-version: 200520
+version: 200607
 Apparently this is Naoya Takahashi's code. I received LG's version and made
 some quality of life modifications. The actual motion correction itself
 remains the same.
@@ -12,6 +12,8 @@ When you run the code you'll get four UIs.
 4. Define the name of the experiment.
 
 Changes:
+- Widened possible motion correction amount to 40 pixels.
+- No removal of negative values.
 - Improved UI input system.
 - Implemented creation of _totalaverage.tif
 - Implemented creation of trial_avgs.mat
@@ -72,7 +74,6 @@ elseif nFrames > 1 % hopefully this isn't true
     base = avg;
     savefn_temp = [pname_base strrep(imf, '.tif', '_base.tif')]; % save basefile to base location
     imwrite(uint16(base), savefn_temp, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
-    baseFile = savefn_temp;
 else
     errordlg('Your template is messed up my dude')
     return
@@ -81,7 +82,9 @@ end
 %% Do the motion correction
 
 nFiles = numel(names);
-fprintf('%s commenced motion correction of %i files\n',datestr(now,'HH:MM:SS'),nFiles)
+temp = find(pname_save == '\');
+fprintf('%s commenced motion correction of %i files to %s\n',...
+    datestr(now,'HH:MM:SS'),nFiles,pname_save(temp(end-1):end))
 nFrames_list = NaN(1,nFiles);
 
 mclog = struct('name',cell(1,nFiles)); % initialise record of frame offset
@@ -153,7 +156,7 @@ cd(current_directory) % return to the directory you were at originally
 tmr.msg = sprintf('%s operation completed in %s | averaged %.2fs per loop\n', datestr(now,'HH:MM:SS'), ...
     datestr(seconds(sum(tmr.times(:,3))),'MM:SS'),mean(tmr.times(:,3)));
 fprintf([tmr.reset, tmr.msg]);
-figure
+figure('Name','Operation completed','NumberTitle','off')
 subplot(4,1,[1 2 3])
 imagesc(trial_avgs,[0 prctile(trial_avgs(:),95)]) % plot what the totalaverage.tif looks like
 xticklabels([]);yticklabels([]);title('totalaverage.tif')
@@ -180,15 +183,21 @@ for xframe = 1:nFrames
     cloc(xframe, :) = lag; % cloc = corrected location (Y-X coordinates)
     frame = circshift(frame, lag); % frame is shifted circularly
     avg = avg + double(frame); % each frame is added together
-    
+    options.message = false;
+        
     % -- Write frame into new .tif file
     if xframe == 1 % if first frame then write a new file
-        imwrite(uint16(frame), savename, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
+        options.overwrite = true; % overwrite if there's already something there
+        saveastiff(frame,savename,options);
+        options.append = true; % from now on append frames onto the file
+        options.overwrite = false;
+%         imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
     else % append frame to the existing file
         flag = 1;
         while flag
             try
-                imwrite(uint16(frame), savename, 'tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
+                saveastiff(frame,savename,options);
+%                 imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
                 flag = 0;
             catch
                 pause(0.2);
@@ -221,26 +230,30 @@ if ~isempty(kernel)
     fourier_frame = fft2(buf);
 end
 
-buf = fourier_base .* conj(fourier_frame);
-cf = ifft2(buf); % inverse fast Fourier transform
+buf = fourier_base .* conj(fourier_frame); % complex double
+cf = ifft2(buf); % inverse fast Fourier transform - the phase correlation, imagesc(cf) if you want to see it
 
-cf(16 : height - 15, :) = 0;
-cf(:, 16 : width - 15) = 0;
+% restrict search window of max correlation search
+correctionlimit = 40; % maximum value in one direction
+cf(correctionlimit + 1 : height - correctionlimit, :) = NaN;
+cf(:, correctionlimit + 1 : width - correctionlimit) = NaN;
+% cf(16 : height - 15, :) = 0; % original
+% cf(:, 16 : width - 15) = 0;
 
 % get xy coords of max value in cf (which corresponds to the offset)
-[mcf1, id1] = max(cf, [], 1);
-[~, id2] = max(mcf1);
+[mcf1, vertidxs] = max(cf, [], 1); % the maximum values in each column - a vector of maxes from each column
+[~, horzidx] = max(mcf1); % the maximum values in the row of maximums - index of the max i.e. horizontal index
 
-% account for edge cases
-if id1(id2) > height / 2
-    vertical = id1(id2) - height - 1;
+% account for the size of the image and direction and stuff
+if vertidxs(horzidx) > height / 2 % if 
+    vertical = vertidxs(horzidx) - height - 1;
 else
-    vertical = id1(id2) - 1;
+    vertical = vertidxs(horzidx) - 1;
 end
-if id2 > width / 2
-    horizontal = id2 - width - 1;
+if horzidx > width / 2
+    horizontal = horzidx - width - 1;
 else
-    horizontal = id2 - 1;
+    horizontal = horzidx - 1;
 end
 y = [vertical horizontal]; % row-column indexing
 end
