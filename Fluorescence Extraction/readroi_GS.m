@@ -1,6 +1,6 @@
-function roimeans = readroi_GS
+function varargout = readroi_GS
 %{
-version: 200607
+version: 2006010
 I got this from LG. It was credited to "INC 2017 by Marina and Pedro."
 
 Takes ROI set (.zip) and calculates average fluorescence for each ROI on
@@ -109,6 +109,7 @@ subplot(2,1,2)
 plot(tmr.times(:,3))
 xlabel('Loop');ylabel('Time (s)');title('Time per loop');yline(mean(tmr.times(:,3)),':');
 
+varargout{1} = roimeans;
 save(savefn, 'roimeans') % save the file
 cd(current_directory) % return matlab to where it was
 end
