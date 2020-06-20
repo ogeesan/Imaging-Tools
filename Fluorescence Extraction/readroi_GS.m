@@ -1,4 +1,4 @@
-function varargout = readroi_GS
+function readroi_GS(varargin)
 %{
 version: 2006010
 I got this from LG. It was credited to "INC 2017 by Marina and Pedro."
@@ -18,13 +18,24 @@ Changes:
 %% Select data to be read
 % get .zip containing ImageJ ROIs
 current_directory = pwd;
-[filename, pathname_base] = uigetfile('*.*', 'Select ROI set.');
-cd(pathname_base)
-[rois] = ReadImageJROI(filename); % read in ROIs, cells with structure containing ROI details
+switch numel(varargin) > 0
+    case false
+        
+        [filename, pathname_base] = uigetfile('*.*', 'Select ROI set.');
+        cd(pathname_base);
+        pathname = uigetdir([], 'Select folder containing .tif files to read.'); % get folder where files to read are
+    otherwise
+        pathname_base = varargin{1};
+        filename = varargin{2};
+        pathname = varargin{3};
+end
+
+
+[rois] = ReadImageJROI(fullfile(pathname_base,filename)); % read in ROIs, cells with structure containing ROI details
 nROIs = size(rois,2);
 
-% get folder where files to read are
-pathname = uigetdir([], 'Select folder containing .tif files to read.');
+
+
 cd(pathname)
 
 filelist = dir('*.tif'); % get a list of all .tif files in the folder
@@ -57,7 +68,7 @@ for xfile = 1:nFiles
         roimasks = false(tiftag(1).Width,tiftag(1).Height,nROIs); % mask is a width x height x nROIs logical that will define pixels of each ROI
         
         for xroi = 1:nROIs
-            roicoords = rois{xroi}.mnCoordinates + 0.5; % retrive roi coordinates and subtract 0.5 to align with what was drawn in ImageJ
+            roicoords = rois{xroi}.mnCoordinates + 0.5; % retrieve roi coordinates and add 0.5 to align with what was drawn in ImageJ
             [in, on] = inpolygon(X,Y,roicoords(:,1),roicoords(:,2)); % check which pixels are (entirely) in or on (the edge of) area defined by roicoords
             roimasks(:,:,xroi) = in & ~on; % define roi as pixels within but not on the edge of the polygon
 %             roimasks(:,:,xroi) = inpolygon(X,Y,rois{xroi}.mnCoordinates(:,1),rois{xroi}.mnCoordinates(:,2)); % the old code
