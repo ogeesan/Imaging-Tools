@@ -12,6 +12,8 @@ If you find an error while using something in this repository please let me know
 
 - Fluorescence Extraction: extract fluorescence signals from .tif files, with more predictable ROI pixel definition and exclusion of sub-100 values.
 
+- Lick Extractor: easily get PortIn and PortOut events from Bpod
+
 - Motion Correction: Takahashi's code but with preservation of negative values and some usability improvements.
 
 - Motion Correction Visualisation: visualisation of x-y offset of frames from an `mclog` file. 
