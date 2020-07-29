@@ -1,6 +1,6 @@
 %% correct_motion_GS
 %{
-version: 200607
+version: 200729
 Apparently this is Naoya Takahashi's code. I received LG's version and made
 some quality of life modifications. The actual motion correction itself
 remains the same.
@@ -22,14 +22,14 @@ Changes:
 %}
 
 %% Specify files and filenames
-function correct_motion_GS
+function correct_motion_GS(opts)
 % get template image location and location to save output metafiles
 [fname, pname_base] = uigetfile('*.tif', 'Pick a Tif-file for base image');
 if isequal(fname, 0) || isequal(pname_base, 0)
     disp('User canceled')
     return;
 end
-current_directory = pwd; % save where you currently are for later
+% current_directory = pwd; % save where you currently are for later
 cd(pname_base); % cd() sets the current directory (to easily specify the next two path names)
 imf = [pname_base fname]; % the location of the base image
 
@@ -55,6 +55,11 @@ names(contains(names,'_mc.tif')) = []; % removes any motion corrected files from
 %kernel = gauss2(hh, ww - 64, 1, 1);    % set filter applied to each frame before cross-correlation calculation. if it is not necessary, set 'kernel = []'.
 %kernel = fft2(kernel);
 kernel = [];
+%% Parse options
+if nargin == 0
+    opts.default = true;
+end
+if ~isfield(opts,'corrlimit');opts.corrlimit = 15;end
 
 %% Get the template file
 tif_info = imfinfo(imf); % struct of tif metadata, each row is a single frame
@@ -70,9 +75,9 @@ elseif nFrames > 1 % hopefully this isn't true
         base = base + double(buf);
     end
     base = base / 10;
-    [avg, ~] = cor_mot(imf, base, nFrames, kernel); % apply the motion correction to the basefile
+    [avg, ~] = cor_mot(imf, base, nFrames, kernel,pname_base,opts); % apply the motion correction to the basefile
     base = avg;
-    savefn_temp = [pname_base strrep(imf, '.tif', '_base.tif')]; % save basefile to base location
+    savefn_temp = strrep(imf, '.tif', '_base.tif'); % save basefile to base location
     imwrite(uint16(base), savefn_temp, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 else
     errordlg('Your template is messed up my dude')
@@ -102,7 +107,7 @@ for xfile = 1:nFiles
     
     
     % -- Motion correction
-    [avg, cloc] = cor_mot(imf, base, nFrames, kernel, pname_save); % apply the motion correction (new files are saved from within this function)
+    [avg, cloc] = cor_mot(imf, base, nFrames, kernel, pname_save,opts); % apply the motion correction (new files are saved from within this function)
     %{
     avg = average of all frames parsed in the motion correction
     cloc = x-y offsets for each frame
@@ -150,9 +155,9 @@ imwrite(uint16(trial_avgs), [pname_base 'totalaverage.tif'], 'tiff', 'Compressio
 % -- Save mclog.mat
 save([pname_base 'mclog.mat'], 'mclog') % save mclog
 
+% cd(current_directory) % return to the directory you were at originally
 
 % -- Script end notification
-cd(current_directory) % return to the directory you were at originally
 tmr.msg = sprintf('%s operation completed in %s | averaged %.2fs per loop\n', datestr(now,'HH:MM:SS'), ...
     datestr(seconds(sum(tmr.times(:,3))),'MM:SS'),mean(tmr.times(:,3)));
 fprintf([tmr.reset, tmr.msg]);
@@ -166,9 +171,18 @@ colorbar
 subplot(4,1,4)
 plot(tmr.times(:,3)) % plot time taken for each loop
 xlabel('Loop');ylabel('Time (s)');title('Time per loop');yline(mean(tmr.times(:,3)),':');
+
+if exist('mclogplot.m','file') == 2 % if the visualisation is on the matlab path
+    figure('Name','Motion Correction','NumberTitle','off');
+    mclogplot(mclog);
+    set(gca,'TickDir','out')
+    xlabel('Frame');ylabel('File') 
+    title('Motion correction visualisation')
+end
+
 end
 %% FUNCTIONS
-function [avg, cloc] = cor_mot(rawname, base, nFrames, kernel,savepath)
+function [avg, cloc] = cor_mot(rawname, base, nFrames, kernel,savepath,opts)
 savename = rawname(find(rawname == '\',1,'last')+1:end); % shed path from raw name
 savename = strrep([savepath '\' savename], '.tif', '_mc.tif'); % define new name
 
@@ -179,24 +193,24 @@ for xframe = 1:nFrames
     frame = imread(rawname, xframe); % read in a single frame from the .tif file
     
     % -- Apply motion correction to the frame
-    lag = corpeak2(base, frame, kernel); % returns xy coords for motion correction, I think by finding max correlation between base and frame
+    lag = corpeak2(base, frame, kernel,opts); % returns xy coords for motion correction, I think by finding max correlation between base and frame
     cloc(xframe, :) = lag; % cloc = corrected location (Y-X coordinates)
     frame = circshift(frame, lag); % frame is shifted circularly
     avg = avg + double(frame); % each frame is added together
-    options.message = false;
+    tiffopts.message = false;
         
     % -- Write frame into new .tif file
     if xframe == 1 % if first frame then write a new file
-        options.overwrite = true; % overwrite if there's already something there
-        saveastiff(frame,savename,options);
-        options.append = true; % from now on append frames onto the file
-        options.overwrite = false;
+        tiffopts.overwrite = true; % overwrite if there's already something there
+        saveastiff(frame,savename,tiffopts);
+        tiffopts.append = true; % from now on append frames onto the file
+        tiffopts.overwrite = false;
 %         imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
     else % append frame to the existing file
         flag = 1;
         while flag
             try
-                saveastiff(frame,savename,options);
+                saveastiff(frame,savename,tiffopts);
 %                 imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
                 flag = 0;
             catch
@@ -211,7 +225,7 @@ end
 
 
 % the act of motion correction, using phase correlation
-function y = corpeak2(base, frame, kernel)
+function y = corpeak2(base, frame, kernel,opts)
 
 [height, width] = size(base);
 base = base(:, 33 : width - 32); % Edge of the movie is not involved in the following calculation
@@ -234,7 +248,7 @@ buf = fourier_base .* conj(fourier_frame); % complex double
 cf = ifft2(buf); % inverse fast Fourier transform - the phase correlation, imagesc(cf) if you want to see it
 
 % restrict search window of max correlation search
-correctionlimit = 40; % maximum value in one direction
+correctionlimit = opts.corrlimit; % maximum value in one direction
 cf(correctionlimit + 1 : height - correctionlimit, :) = NaN;
 cf(:, correctionlimit + 1 : width - correctionlimit) = NaN;
 % cf(16 : height - 15, :) = 0; % original
