@@ -2,7 +2,9 @@
 ## How to use
 `clustervis(data,[nClusters])`, where `data` is a matrix where each row is a different object (e.g. different cell) and each column is a different sample (e.g. time point). `[nClusters]` is an optional argument that determines how many final groups `data` will be placed into.
 
+Considerations:
 - Traces in plot D aren't colour-matched to plot A
+- Remember to consider how to/if to normalise your data (e.g. own maximum, z-score)
 
 ## How does hierarchical clustering work?
 I'd recommend you watch this YouTube video:
