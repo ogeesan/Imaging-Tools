@@ -24,7 +24,7 @@ Changes:
 %% Specify files and filenames
 function correct_motion_GS(opts)
 % get template image location and location to save output metafiles
-[fname, pname_base] = uigetfile('*.tif', 'Pick a Tif-file for base image');
+[fname, pname_base] = uigetfile('*.tif*', 'Pick a Tif-file for base image');
 if isequal(fname, 0) || isequal(pname_base, 0)
     disp('User canceled')
     return;
@@ -34,7 +34,7 @@ cd(pname_base); % cd() sets the current directory (to easily specify the next tw
 imf = [pname_base fname]; % the location of the base image
 
 % raw files
-pname_raw = uigetdir('*.tif', 'Select folder containing Tif-files to motion correct'); % location of raw files
+pname_raw = uigetdir('*.tif*', 'Select folder containing Tif-files to motion correct'); % location of raw files
 if isequal(pname_raw, 0)
     disp('User canceled')
     return;
@@ -47,9 +47,9 @@ if isequal(pname_save, 0)
     return;
 end
 
-filelist = dir([pname_raw '\*.tif']); % list of all .tif files in the folder of raw files
+filelist = dir([pname_raw '\*.tif*']); % list of all .tif files in the folder of raw files
 names = {filelist.name}';
-names(contains(names,'_mc.tif')) = []; % removes any motion corrected files from being motion corrected again
+names(contains(names,'_mc.tif*')) = []; % removes any motion corrected files from being motion corrected again
 
 % I don't know what this is does, some sort of setting for the MC
 %kernel = gauss2(hh, ww - 64, 1, 1);    % set filter applied to each frame before cross-correlation calculation. if it is not necessary, set 'kernel = []'.
