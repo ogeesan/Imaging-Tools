@@ -21,7 +21,7 @@ current_directory = pwd;
 switch numel(varargin) > 0
     case false
         
-        [fname, basedir] = uigetfile({'*.tif' '*.roi'}, 'Select ROIs.');
+        [fname, basedir] = uigetfile('*.*','Select RoiSet.zip file');
         cd(basedir);
         mcdir = uigetdir([], 'Select folder containing .tif files to read.'); % get folder where files to read are
     otherwise
