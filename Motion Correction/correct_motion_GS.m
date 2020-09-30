@@ -1,6 +1,6 @@
 %% correct_motion_GS
 %{
-version: 200729
+version: 200830
 Apparently this is Naoya Takahashi's code. I received LG's version and made
 some quality of life modifications. The actual motion correction itself
 remains the same.
@@ -19,37 +19,38 @@ Changes:
 - Implemented creation of trial_avgs.mat
 - Improved readability of script.
 - Improved progress update system.
+- Added compatibility for .tiff/.tif extension difference
 %}
 
 %% Specify files and filenames
 function correct_motion_GS(opts)
 % get template image location and location to save output metafiles
-[fname, pname_base] = uigetfile('*.tif*', 'Pick a Tif-file for base image');
-if isequal(fname, 0) || isequal(pname_base, 0)
+[fname, basedir] = uigetfile('*.tif*', 'Pick a Tif-file for base image');
+if isequal(fname, 0) || isequal(basedir, 0)
     disp('User canceled')
     return;
 end
 % current_directory = pwd; % save where you currently are for later
-cd(pname_base); % cd() sets the current directory (to easily specify the next two path names)
-imf = [pname_base fname]; % the location of the base image
+cd(basedir); % cd() sets the current directory (to easily specify the next two path names)
+impath = fullfile(basedir, fname); % the location of the base image
 
 % raw files
-pname_raw = uigetdir('*.tif*', 'Select folder containing Tif-files to motion correct'); % location of raw files
-if isequal(pname_raw, 0)
+rawdir = uigetdir('*.tif*', 'Select folder containing Tif-files to motion correct'); % location of raw files
+if isequal(rawdir, 0)
     disp('User canceled')
     return;
 end
 
 % new save location for motion corrected files
-pname_save = uigetdir([], 'Select a folder to save motion corrected files into');
-if isequal(pname_save, 0)
+savedir = uigetdir([], 'Select a folder to save motion corrected files into');
+if isequal(savedir, 0)
     disp('User canceled')
     return;
 end
 
-filelist = dir([pname_raw '\*.tif*']); % list of all .tif files in the folder of raw files
-names = {filelist.name}';
-names(contains(names,'_mc.tif*')) = []; % removes any motion corrected files from being motion corrected again
+filelist = dir([rawdir '\*.tif*']); % list of all .tif files in the folder of raw files
+fnames = {filelist.name}';
+fnames(contains(fnames,'_mc.tif*')) = []; % removes any motion corrected files from being motion corrected again
 
 % I don't know what this is does, some sort of setting for the MC
 %kernel = gauss2(hh, ww - 64, 1, 1);    % set filter applied to each frame before cross-correlation calculation. if it is not necessary, set 'kernel = []'.
@@ -60,24 +61,25 @@ if nargin == 0
     opts.default = true;
 end
 if ~isfield(opts,'corrlimit');opts.corrlimit = 15;end
+if ~isfield(opts,'appendnum');opts.appendnum = true;end
 
 %% Get the template file
-tif_info = imfinfo(imf); % struct of tif metadata, each row is a single frame
+tif_info = imfinfo(impath); % struct of tif metadata, each row is a single frame
 nFrames = length(tif_info);
 if nFrames == 1
-    base = imread(imf, 1); % template is a single frame image
+    base = imread(impath, 1); % template is a single frame image
 elseif nFrames > 1 % hopefully this isn't true
     disp('Template is not single image, applying motion correction.')
-    base = imread(imf, 1);
+    base = imread(impath, 1);
     base = double(base);
     for i = 2 : 10
-        buf = imread(imf, i);
+        buf = imread(impath, i);
         base = base + double(buf);
     end
     base = base / 10;
-    [avg, ~] = cor_mot(imf, base, nFrames, kernel,pname_base,opts); % apply the motion correction to the basefile
+    [avg, ~] = cor_mot(impath, base, nFrames, kernel,basedir,opts); % apply the motion correction to the basefile
     base = avg;
-    savefn_temp = strrep(imf, '.tif', '_base.tif'); % save basefile to base location
+    savefn_temp = strrep(impath, '.tif', '_base.tif'); % save basefile to base location
     imwrite(uint16(base), savefn_temp, 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 else
     errordlg('Your template is messed up my dude')
@@ -86,36 +88,37 @@ end
 
 %% Do the motion correction
 
-nFiles = numel(names);
-temp = find(pname_save == '\');
+nFiles = numel(fnames);
+temp = find(savedir == filesep);
 fprintf('%s commenced motion correction of %i files to %s\n',...
-    datestr(now,'HH:MM:SS'),nFiles,pname_save(temp(end-1):end))
+    datestr(now,'HH:MM:SS'),nFiles,savedir(temp(end-1):end))
 nFrames_list = NaN(1,nFiles);
 
 mclog = struct('name',cell(1,nFiles)); % initialise record of frame offset
-trial_avgs = NaN(tif_info(1).Width, tif_info(1).Width, nFiles); % presumably 512x512xnFiles (uses base imf)
+trial_avgs = NaN(tif_info(1).Width, tif_info(1).Width, nFiles); % presumably 512x512xnFiles (uses base impath)
 
 tmr.reset = ''; % all tmr variables are just used for timing purposes
 tmr.times = NaN(nFiles,4); % will keep track of time required for each MC
 
 for xfile = 1:nFiles
     tmr.times(xfile,1) = now; % record start time for file
+    opts.xfile = xfile;
     
-    imf = [pname_raw '\' names{xfile}]; % current filename
-    nFrames = length(imfinfo(imf));
+    impath = fullfile(rawdir,fnames{xfile}); % current filename
+    nFrames = length(imfinfo(impath));
     nFrames_list(xfile) = nFrames; % create list of nFrames for weighted average later
     
     
     % -- Motion correction
-    [avg, cloc] = cor_mot(imf, base, nFrames, kernel, pname_save,opts); % apply the motion correction (new files are saved from within this function)
+    [avg, cloc] = cor_mot(impath, base, nFrames, kernel, savedir,opts); % apply the motion correction (new files are saved from within this function)
     %{
     avg = average of all frames parsed in the motion correction
     cloc = x-y offsets for each frame
-    imf = filepath of .tif of interest
+    impath = filepath of .tif of interest
     base = array of template file
     nFrames = number of frames
     kernel = something that can alter the maths
-    pname_save = folder to save mc files to (my addition)
+    savedir = folder to save mc files to (my addition)
     %}
     
     
@@ -123,7 +126,7 @@ for xfile = 1:nFiles
     trial_avgs(:,:,xfile) = avg; % insert weighted value in
     
     % add information about motion correction into mclog
-    mclog(xfile).name = imf;
+    mclog(xfile).name = impath;
     mclog(xfile).vshift = cloc(:, 1);
     mclog(xfile).hshift = cloc(:, 2);
 %     mclog(xfile).avg = avg; % considering each 512x512 is almost 2MB, yeah nah
@@ -141,7 +144,7 @@ for xfile = 1:nFiles
 end
 
 % -- Save trial_avgs.mat
-save([pname_base 'trial_avgs.mat'],'trial_avgs') % save the raw trial averages for revision if required
+save(fullfile(basedir, 'trial_avgs.mat'),'trial_avgs') % save the raw trial averages for revision if required
 
 % -- Save totalaverage.tif
 % convert trial averages to weight average
@@ -150,10 +153,10 @@ for xfile = 1:nFiles
 end
 
 trial_avgs = mean(trial_avgs,3) .* 1000; % sum everything together for weighted average, multiply because unit16 will "compress" it
-imwrite(uint16(trial_avgs), [pname_base 'totalaverage.tif'], 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
+imwrite(uint16(trial_avgs), fullfile(basedir, 'totalaverage.tif'), 'tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
 
 % -- Save mclog.mat
-save([pname_base 'mclog.mat'], 'mclog') % save mclog
+save(fullfile(basedir, 'mclog.mat'), 'mclog') % save mclog
 
 % cd(current_directory) % return to the directory you were at originally
 
@@ -182,15 +185,24 @@ end
 
 end
 %% FUNCTIONS
-function [avg, cloc] = cor_mot(rawname, base, nFrames, kernel,savepath,opts)
-savename = rawname(find(rawname == '\',1,'last')+1:end); % shed path from raw name
-savename = strrep([savepath '\' savename], '.tif', '_mc.tif'); % define new name
+function [avg, cloc] = cor_mot(impath, base, nFrames, kernel,savedir,opts)
+[~, savename, ~] = fileparts(impath); % shed directory and extension (.tiff/.tif) from path
+
+if opts.appendnum
+    xfile = opts.xfile;
+    filetail = sprintf('_%05i_mc.tif',xfile); % number motion correction files independently
+else
+    filetail = '_mc.tif';
+end
+savename = [savename filetail]; % concat the strings (savename doesn't have an extension)
+
+savepath = fullfile(savedir,savename); % define new name
 
 avg = zeros(size(base)); % initialise storage of average for trial
 cloc = zeros(nFrames, 2); % initialise offset meta
 
 for xframe = 1:nFrames
-    frame = imread(rawname, xframe); % read in a single frame from the .tif file
+    frame = imread(impath, xframe); % read in a single frame from the .tif file
     
     % -- Apply motion correction to the frame
     lag = corpeak2(base, frame, kernel,opts); % returns xy coords for motion correction, I think by finding max correlation between base and frame
@@ -202,7 +214,7 @@ for xframe = 1:nFrames
     % -- Write frame into new .tif file
     if xframe == 1 % if first frame then write a new file
         tiffopts.overwrite = true; % overwrite if there's already something there
-        saveastiff(frame,savename,tiffopts);
+        saveastiff(frame,savepath,tiffopts);
         tiffopts.append = true; % from now on append frames onto the file
         tiffopts.overwrite = false;
 %         imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
@@ -210,7 +222,7 @@ for xframe = 1:nFrames
         flag = 1;
         while flag
             try
-                saveastiff(frame,savename,tiffopts);
+                saveastiff(frame,savepath,tiffopts);
 %                 imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
                 flag = 0;
             catch
