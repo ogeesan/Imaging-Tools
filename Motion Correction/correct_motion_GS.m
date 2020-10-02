@@ -1,6 +1,6 @@
 %% correct_motion_GS
 %{
-version: 200830
+version: 201002
 Apparently this is Naoya Takahashi's code. I received LG's version and made
 some quality of life modifications. The actual motion correction itself
 remains the same.
@@ -65,6 +65,7 @@ if ~isfield(opts,'appendnum');opts.appendnum = true;end
 
 %% Get the template file
 tif_info = imfinfo(impath); % struct of tif metadata, each row is a single frame
+opts.tif_info = tif_info;
 nFrames = length(tif_info);
 if nFrames == 1
     base = imread(impath, 1); % template is a single frame image
@@ -95,7 +96,7 @@ fprintf('%s commenced motion correction of %i files to %s\n',...
 nFrames_list = NaN(1,nFiles);
 
 mclog = struct('name',cell(1,nFiles)); % initialise record of frame offset
-trial_avgs = NaN(tif_info(1).Width, tif_info(1).Width, nFiles); % presumably 512x512xnFiles (uses base impath)
+trial_avgs = NaN(tif_info(1).Height, tif_info(1).Width, nFiles); % presumably 512x512xnFiles (uses base impath)
 
 tmr.reset = ''; % all tmr variables are just used for timing purposes
 tmr.times = NaN(nFiles,4); % will keep track of time required for each MC
@@ -202,7 +203,7 @@ avg = zeros(size(base)); % initialise storage of average for trial
 cloc = zeros(nFrames, 2); % initialise offset meta
 
 for xframe = 1:nFrames
-    frame = imread(impath, xframe); % read in a single frame from the .tif file
+    frame = imread(impath, xframe,'Info',opts.tif_info); % read in a single frame from the .tif file
     
     % -- Apply motion correction to the frame
     lag = corpeak2(base, frame, kernel,opts); % returns xy coords for motion correction, I think by finding max correlation between base and frame
