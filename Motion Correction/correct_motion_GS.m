@@ -108,6 +108,7 @@ for xfile = 1:nFiles
     impath = fullfile(rawdir,fnames{xfile}); % current filename
     nFrames = length(imfinfo(impath));
     nFrames_list(xfile) = nFrames; % create list of nFrames for weighted average later
+    opts.tif_info = imfinfo(impath);
     
     
     % -- Motion correction
