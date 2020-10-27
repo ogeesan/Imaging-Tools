@@ -1,6 +1,8 @@
-%% correct_motion_GS
+% correct_motion_GS
+
+
 %{
-version: 201002
+version: 202023
 Apparently this is Naoya Takahashi's code. I received LG's version and made
 some quality of life modifications. The actual motion correction itself
 remains the same.
@@ -20,32 +22,57 @@ Changes:
 - Improved readability of script.
 - Improved progress update system.
 - Added compatibility for .tiff/.tif extension difference
+
+
+
 %}
 
 %% Specify files and filenames
 function correct_motion_GS(opts)
-% get template image location and location to save output metafiles
-[fname, basedir] = uigetfile('*.tif*', 'Pick a Tif-file for base image');
-if isequal(fname, 0) || isequal(basedir, 0)
-    disp('User canceled')
-    return;
+%% Parse options
+if nargin == 0
+    opts.default = true;
 end
-% current_directory = pwd; % save where you currently are for later
-cd(basedir); % cd() sets the current directory (to easily specify the next two path names)
-impath = fullfile(basedir, fname); % the location of the base image
+if ~isfield(opts,'corrlimit');opts.corrlimit = 15;end % the maximum pixel offset
+if ~isfield(opts,'appendnum');opts.appendnum = true;end % add a new numbering onto the end of the file
+if ~isfield(opts,'kernel');opts.kernel = [];end % the kernel for the motion correction (I don't understand)
 
-% raw files
-rawdir = uigetdir('*.tif*', 'Select folder containing Tif-files to motion correct'); % location of raw files
-if isequal(rawdir, 0)
-    disp('User canceled')
-    return;
-end
 
-% new save location for motion corrected files
-savedir = uigetdir([], 'Select a folder to save motion corrected files into');
-if isequal(savedir, 0)
-    disp('User canceled')
-    return;
+%% Get locations of the files to be handled
+
+% using opts, the user could put this function into a loop to leave a bunch
+% of motion corrections to run over night or something. Otherwise the users
+% uses dialogue boxes to specify the file locations.
+
+if ~isfield(opts,'basedir')
+    % get template image location and location to save output metafiles
+    [fname, basedir] = uigetfile('*.tif*', 'Pick a Tif-file for base image');
+    if isequal(fname, 0) || isequal(basedir, 0)
+        disp('User canceled')
+        return;
+    end
+    % current_directory = pwd; % save where you currently are for later
+    cd(basedir); % cd() sets the current directory (to easily specify the next two path names)
+    impath = fullfile(basedir, fname); % the location of the base image
+    
+    % raw files
+    rawdir = uigetdir('*.tif*', 'Select folder containing Tif-files to motion correct'); % location of raw files
+    if isequal(rawdir, 0)
+        disp('User canceled')
+        return;
+    end
+    
+    % new save location for motion corrected files
+    savedir = uigetdir([], 'Select a folder to save motion corrected files into');
+    if isequal(savedir, 0)
+        disp('User canceled')
+        return;
+    end
+else
+    basedir = opts.basedir;
+    fname = opts.fname;
+    rawdir = opts.rawdir;
+    savedir = opts.savedir
 end
 
 filelist = dir([rawdir '\*.tif*']); % list of all .tif files in the folder of raw files
@@ -55,13 +82,13 @@ fnames(contains(fnames,'_mc.tif*')) = []; % removes any motion corrected files f
 % I don't know what this is does, some sort of setting for the MC
 %kernel = gauss2(hh, ww - 64, 1, 1);    % set filter applied to each frame before cross-correlation calculation. if it is not necessary, set 'kernel = []'.
 %kernel = fft2(kernel);
-kernel = [];
-%% Parse options
-if nargin == 0
-    opts.default = true;
+% kernel = [];
+kernel = opts.kernel;
+
+opts.usenewsave = exist('saveastiff','file'); % check that the person is using the better tiffsaving
+if ~opts.usenewsave
+    warning('saveastiff() not found, imread() will be used instead and therefore data will not be conserved')
 end
-if ~isfield(opts,'corrlimit');opts.corrlimit = 15;end
-if ~isfield(opts,'appendnum');opts.appendnum = true;end
 
 %% Get the template file
 tif_info = imfinfo(impath); % struct of tif metadata, each row is a single frame
@@ -216,16 +243,22 @@ for xframe = 1:nFrames
     % -- Write frame into new .tif file
     if xframe == 1 % if first frame then write a new file
         tiffopts.overwrite = true; % overwrite if there's already something there
-        saveastiff(frame,savepath,tiffopts);
-        tiffopts.append = true; % from now on append frames onto the file
-        tiffopts.overwrite = false;
-%         imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
+        if opts.usenewsave
+            saveastiff(frame,savepath,tiffopts);
+            tiffopts.append = true; % from now on append frames onto the file
+            tiffopts.overwrite = false;
+        else
+            imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
+        end
     else % append frame to the existing file
         flag = 1;
         while flag
             try
-                saveastiff(frame,savepath,tiffopts);
-%                 imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
+                if opts.usenewsave
+                    saveastiff(frame,savepath,tiffopts);
+                else
+                    imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
+                end
                 flag = 0;
             catch
                 pause(0.2);
