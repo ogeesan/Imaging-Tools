@@ -218,9 +218,11 @@ end
 tic
 savepath = fullfile(stack_dir,savename); % save the zstack into the folder
 tiffsaveexists = exist('saveastiff','file'); % check that the person is using the better tiffsaving
+
 for xframe = 1:nFrames
     tiffopts.message = false;
     frame = avgdata(:,:,xframe);
+    frame = uint16(frame); %! conversion necessary for neuTube loading
     % -- Write frame into new .tif file
     if xframe == 1 % if first frame then write a new file
         tiffopts.overwrite = true; % overwrite if there's already something there
@@ -229,7 +231,7 @@ for xframe = 1:nFrames
             tiffopts.append = true; % from now on append frames onto the file
             tiffopts.overwrite = false;
         else
-            imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite'); % write a new _mc file
+            imwrite(frame, savepath, 'Tiff', 'Compression', 'none', 'WriteMode', 'overwrite');
         end
     else % append frame to the existing file
         flag = 1;
@@ -238,7 +240,7 @@ for xframe = 1:nFrames
                 if tiffsaveexists
                     saveastiff(frame,savepath,tiffopts);
                 else
-                    imwrite(uint16(frame), savename, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
+                    imwrite(frame, savepath, 'Tiff', 'Compression', 'none', 'WriteMode', 'append'); % append the next frame
                 end
                 flag = 0;
             catch
@@ -247,7 +249,7 @@ for xframe = 1:nFrames
         end
     end
 end
-fprintf('%s %s saved in %.2f seconds\n',datestr(now,13),savename,toc)
+fprintf('%s %s saved in %.2f seconds\n',datestr(now,13),savepath,toc)
 %% Some legacy stuff that does what sliceViewer does but worse
 % imh = imagesc(tiledata{1});
 % axis equal
