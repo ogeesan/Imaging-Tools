@@ -9,7 +9,9 @@ function zstacker(visualise,opts)
 
 
 %{
-George Stuyt October 2020
+George Stuyt 2020
+version: 2020-10-29
+
 sliceViewer requires 2019b
 %}
 
@@ -19,7 +21,7 @@ sliceViewer requires 2019b
 if nargin == 0; visualise = false;end
 if nargin < 2; opts.default = true;end
 
-savename = 'zstack.tiff'; % the default name
+savename = 'zstack.tif'; % the default name
 if opts.default
     stack_dir = uigetdir([],'Pick directory of files');
 else
