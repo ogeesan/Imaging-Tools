@@ -10,6 +10,8 @@ If you find an error while using something in this repository let me know, becau
 
 - Data Collation: an example of my collation system.
 
+- Detect Calcium Events: a out-of-the-box usable event detection, which should really be used as a scaffold for your own system.
+
 - Fluorescence Extraction: extract fluorescence signals from .tif files, with more predictable ROI pixel definition and exclusion of sub-100 values.
 
 - Hierarchical Clustering Visualisation: quick 'n dirty clustering visualisation
@@ -21,4 +23,5 @@ If you find an error while using something in this repository let me know, becau
 - Motion Correction Visualisation: visualisation of x-y offset of frames from an `mclog.mat` file. 
 
 - Motion Correction Reversal: go from motion corrected files and a mclog.mat file to the raw .tifs again.
+
 - zstacker: average together multiple sweeps to form a single zstacker
