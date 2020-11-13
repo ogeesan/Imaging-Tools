@@ -6,7 +6,17 @@ If you find an error while using something in this repository let me know, becau
 
 # How to use
 
-You could copy/paste the scripts you need into your MATLAB folder, or you could add the scripts into the PATH (`Home > Set Path > Add with Subfolders` to make visible to MATLAB). Alternatively, the paths could be added using the [`startup.m` method](https://au.mathworks.com/help/matlab/ref/startup.html).
+You could copy/paste the scripts you need into your MATLAB folder, or you could add the scripts into the PATH (`Home > Set Path > Add with Subfolders` to make visible to MATLAB). 
+
+Alternatively, the paths could be added using a script:
+
+```matlab
+addpath(genpath('C:\path\to\the\folder\you\want'));
+```
+
+`genpath()` will generate paths to all folders and subfolders, while `addpath()` add the given paths to the MATLAB Path. The MATLAB Path is the list of all folders that MATLAB will search for when looking for a script or file.
+
+Personally, I use the `addpath()` method with the [`startup.m` method](https://au.mathworks.com/help/matlab/ref/startup.html) so that I don't have to manually do anything.
 
 # The tools
 
