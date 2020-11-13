@@ -4,9 +4,15 @@ Each folder contains a script, and there's a readme file that explains things if
 
 If you find an error while using something in this repository let me know, because this stuff is meant to work for anyone.
 
+# How to use
+
+You could copy/paste the scripts you need into your MATLAB folder, or you could add the scripts into the PATH (`Home > Set Path > Add with Subfolders` to make visible to MATLAB). Alternatively, the paths could be added using the [`startup.m` method](https://au.mathworks.com/help/matlab/ref/startup.html).
+
 # The tools
 
 - Calcium Trace Navigator: Matlab App for quickly visualising different trials and ROIs.
+
+- Convert DFF store: convert between dffmat (Luca's) and dffarray (George's) method of storing data if you have to
 
 - Data Collation: an example of my collation system.
 
