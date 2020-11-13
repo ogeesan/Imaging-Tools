@@ -4,17 +4,17 @@ Hola, this bad boy's a Matlab app for navigating through calcium traces. The pri
 
 1. To install, open the Calcium Trace Navigator.mlappinstall file. The app is now accessible in the Apps tab in MATLAB.
 
-2. A `dffarray` is required to exist in the workspace (an example can be loaded in with the dff_example.mat).
+2. A `dffmat` is required to exist in the workspace (an example can be loaded in with the dff_example.mat).
 
 3. Check out the Help button in the app to see the keyboard shortcuts for speedy navigation.
 
 # More information
 
-The app takes `dffarray` **from the Workspace** and visualises it. `dffarray` is a cell of size 1 x nTrials. Inside of each cell there's a matrix of size nROIs x nFrames.
+The app takes `dffmat` **from the Workspace** and visualises it. `dffmat` is a cell of size nTrials x nROIs, where each cell contains a single dff trace.
 
 Plotting by Trial shows a single trial with all ROIs, and plotting by ROI does the opposite. The Waterfall setting explodes out the traces according to their number so that the first trial is at the top (y-values correspond to the trial/roi).
 
-The dffarray lamp will be green when the `dffarray` meets criteria, yellow when it does not, and red when the variable does not exist in the workspace.
+The dffarray lamp will be green when the `dffmat` meets criteria, yellow when it does not, and red when the variable does not exist in the workspace.
 
 The .mlapp file is the App Designer script I've used to make the app, which you might be interested in if you want to build your own visualisation app.
 
