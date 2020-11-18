@@ -1,35 +1,38 @@
-function EventTable = detect_events(dffarray)
+function EventTable = detect_events(dffmat)
 % EventTable = detect_events(dffarray)
 
+%% Main
 prm.mindur = 10; % minimum # of frames above threshold to be considered event
 prm.interdistance = 5; % minimum # of frames between an offset and onset
 prm.edgecase = 'ambitious'; % decide how edge-cases will be handled
 
-nTrials = numel(dffarray);
-nROIs = size(dffarray{1},1);
+nTrials = size(dffmat,1);
+nROIs = size(dffmat,2);
 
-%% - Calculate thresholds
+% - Calculate thresholds
 thresholds = NaN(nROIs,1); % vector that will store the threshold value for each ROI
 for roi = 1:nROIs
     % -- Get all dff values for a single roi
-    data = cell(nTrials,1);
-    for trial = 1:nTrials
-        data{trial} = dffarray{trial}(roi,:); % each cell is a trace from a trial
-    end
-    data = [data{:}]; % unpack all of the traces into a single vector
+%     data = cell(nTrials,1);
+%     for trial = 1:nTrials
+%         data{trial} = dffmat{trial}(roi,:); % each cell is a trace from a trial
+%     end
+%     data = [data{:}]; % unpack all of the traces into a single vector
+    data = horzcat(dffmat{:,roi});
     
     % -- Define the threshold
     thresholds(roi) = 3*mad(data,1);
 end
 
-%% - Detect events
+% - Detect events
+Events = struct;
 counter = 0;
 for roi = 1:nROIs
     threshold = thresholds(roi);
     for trial = 1:nTrials
         
         % -- Get ftrace and account for possible shutter closure
-        ftrace = dffarray{trial}(roi,:);
+        ftrace = dffmat{trial,roi};
         ftrace(end-2:end) = NaN; % trim the last values due to laser shutoff
         % (if an event goes below threshold in the final frames of a trace
         % it could be because the fluorescence signal disappeared because
@@ -87,7 +90,7 @@ for roi = 1:nROIs
         
         % -- Loop through each detected events
         for event = 1:numel(rise_edges)
-            %% Extract event properties
+            % Extract event properties
             onset = rise_edges(event);
             offset = fall_edges(event);
             
