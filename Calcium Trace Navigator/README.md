@@ -20,7 +20,13 @@ The .mlapp file is the App Designer script I've used to make the app, which you 
 
 ### Threshold and filtering
 
-A simple thresholding system can be used to filter out traces with no events. Any trace that does not cross the threshold will be filtered out of view when the Filter button is active.
+A threshold can be used to filter out traces, which will occur when the Filter button is active.
+
+The threshold can either be a number or a three number argument for a std window based calculation. The first value will be  *n* \* STD, and the next two numbers will define the index (window) to calculate the std from. For example, '`3 1:30`' is equivalent to 3 times the std of `data(:,1:30)`, where `data` is all traces that would be plotted.
+
+### Choosing which variable to load
+
+The top-left box that contains "dffmat" specifies the name of the variable the Navigator will look for. However, it will almost always be the case that it will be easier to use a script to replace `dffmat` with what you're interested in.
 
 ### Exporting the graph
 
