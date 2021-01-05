@@ -2,20 +2,29 @@ function dffmat = calc_dff(roimeans)
 % dffmat = calc_dff(roimeans)
 
 %% Main
+
+% if the roimeans uses the old storage then it needs to be converted
+if size(roimeans{1},1) > 1
+    nTrials = numel(roimeans);
+    nRois = size(roimeans{1},1);
+    data = cell(nTrials,nRois);
+    for trial = 1:nTrials
+        for roi = 1:nRois
+            data{trial,roi} = roimeans{trial}(roi,:);
+        end
+    end
+    roimeans = data;
+end
+
 binsize = 1;
-nROIs = size(roimeans{1},1);
-nTrials = size(roimeans,2);
+nRois = size(roimeans,2);
+nTrials = size(roimeans,1);
 
 % -- Find ROI baseline values
-roibaselines = NaN(1,nROIs); % store medians of percentiles
-for roi = 1:nROIs
+roibaselines = NaN(1,nRois); % store medians of percentiles
+for roi = 1:nRois
     
-    % --- Collect all traces from the ROI
-    data = cell(1,nTrials); % insert into cells as traces can be different length
-    for trial = 1:nTrials
-        data{trial} = roimeans{trial}(roi,:);
-    end
-    data = [data{:}]; % horzcat() cells into vector
+    data = [roimeans{:,roi}]; % get all values for this roi from all trials
     
     bins = 0:binsize:ceil(max(data)/binsize)*binsize; % define bins to sort into as 
     [counts, edges] = histcounts(data,bins); % histogram of values across all trials
@@ -27,10 +36,10 @@ for roi = 1:nROIs
 end
 
 % -- Calculate delta fluorescence
-dffmat = cell(nTrials,nROIs);
+dffmat = cell(nTrials,nRois);
 for trial = 1:nTrials
-    for roi = 1:nROIs
-        ftrace = roimeans{trial}(roi,:); % extract relevant trace from roimeans
+    for roi = 1:nRois
+        ftrace = roimeans{trial,roi};
         ftrace = (ftrace - roibaselines(roi)) ./ roibaselines(roi); % calculate dff trace
         
         % Assume values for first and last two frames (prevents frame
