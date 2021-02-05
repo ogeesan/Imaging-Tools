@@ -1,6 +1,6 @@
 Naoya Takashi's code for motion correction (and my version) output mclog.mat, a record of offsets applied to each frame. `mclogplot()` visualises these offsets by mapping the x-y offset of each frame onto a two-dimensional colourmap. It's like using x-y coordinates to select a value on the colourwheel.
 
-![Example image](img/mclogplotexample.png?raw=true)
+![Example image](https://github.com/ogeesan/Public-Tools/blob/master/img/mclogplotexample.png?raw=true)
 
 # How to use
 
